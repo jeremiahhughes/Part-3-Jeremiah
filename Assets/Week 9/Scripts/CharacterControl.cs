@@ -8,7 +8,7 @@ public class CharacterControl : MonoBehaviour
     public static Villager SelectedVillager { get; private set; }
     public static void SetSelectedVillager(Villager villager)
     {
-        if(SelectedVillager != null)
+        if(SelectedVillager.GetType() != null)
         {
             SelectedVillager.Selected(false);
         }

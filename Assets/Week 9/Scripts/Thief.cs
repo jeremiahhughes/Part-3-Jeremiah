@@ -1,44 +1,45 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
-
 
 public class Thief : Villager
 {
-    Animator animator;
-    public ChestType whoCanOpen;
     public GameObject knifePrefab;
-    public Transform spawnPoint;
+    public Transform spawnPoint1;
     public Transform spawnPoint2;
-    private bool attack = false;
+    public float dashSpeed = 7;
+    Coroutine dashing;
+    protected override void Attack()
+    {
+        //dash towards mouse
+        destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if(dashing != null ) 
+        {
+            StopCoroutine(dashing);
+        }
+        dashing = StartCoroutine(Dash());
+       
+        
+    }
 
+    IEnumerator Dash()
+    {
+        speed += dashSpeed;
+        while(speed > 3)
+        {
+            yield return null;
+        }
+        base.Attack();
+        yield return new WaitForSeconds(0.1f);
+        Instantiate(knifePrefab, spawnPoint1.position, spawnPoint1.rotation);
+        yield return new WaitForSeconds(0.2f);
+        Instantiate(knifePrefab, spawnPoint2.position, spawnPoint2.rotation);
+
+    }
+    
+   
     public override ChestType CanOpen()
     {
         return ChestType.Thief;
-    }
-    protected override void Attack()
-    {
-        dash();
-        destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        base.Attack();
-        Instantiate(knifePrefab, spawnPoint.position, spawnPoint.rotation);
-        Instantiate(knifePrefab, spawnPoint2.position, spawnPoint2.rotation);
-        if(Input.GetMouseButtonDown(0))
-        {
-            speed = 3;
-            attack = false;
-        }
-         void dash()
-        {
-            if(attack == true) 
-            {
-                speed = 20;
-            }
-            if(attack == false)
-            {
-                speed = 3;
-            }
-        }
     }
 }
